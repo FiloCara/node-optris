@@ -1,0 +1,4 @@
+node_modules
+irDirectSDK
+.vscode
+build/*
