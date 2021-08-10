@@ -1,6 +1,7 @@
 // Example script to test the node-optris module
 
-const optris = require('./direct_binding')
+// const optris = require('./direct_binding')
+const optris = require('node-optris')
 
 xmlPath = "config_file_windows.xml"
 

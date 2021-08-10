@@ -132,8 +132,8 @@ var get_thermal_image = function(w, h) {
 // TODO: to be tested
 var get_palette_image = function(w, h) {
     let arr = new ucharArray(w * h * 3)
-    let w = ref.ref(w)
-    let h = ref.ref(h)
+    w = ref.ref(w)
+    h = ref.ref(h)
     _  = lib.evo_irimager_get_thermal_image(w, h, arr)
     return arr
 }
@@ -208,11 +208,12 @@ var set_palette = function(id) {
 */
 
 // Exports functions
-exports.usb_init = usb_init
-exports.tcp_init = tcp_init
-exports.terminate = terminate
-exports.get_thermal_image_size = get_thermal_image_size
-exports.get_palette_image_size = get_palette_image_size 
-exports.get_thermal_image = get_thermal_image
-exports.get_palette_image = get_palette_image
-exports.set_palette = set_palette
+module.exports.usb_init = usb_init
+module.exports.tcp_init = tcp_init
+module.exports.terminate = terminate
+module.exports.get_thermal_image_size = get_thermal_image_size
+module.exports.get_palette_image_size = get_palette_image_size 
+module.exports.get_thermal_image = get_thermal_image
+module.exports.get_palette_image = get_palette_image
+module.exports.set_palette = set_palette
+

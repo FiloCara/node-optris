@@ -2,7 +2,7 @@
   "name": "node-optris",
   "version": "0.0.1",
   "description": "Unofficial Node-RED node to get thermal images from Optris cameras",
-  "main": "direct_binding.js",
+  "main": "node-optris.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
