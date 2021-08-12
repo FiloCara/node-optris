@@ -1,4 +1,4 @@
 node_modules
 irDirectSDK
 .vscode
-build/*
+log.txt
