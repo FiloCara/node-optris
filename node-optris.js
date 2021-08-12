@@ -2,29 +2,36 @@ const ffi = require('ffi-napi');
 const ref = require('ref-napi')
 const refArray = require('ref-array-napi')
 
-let DLLPATH = "irDirectSDK/sdk/x64/libirimager.dll"
-
-const setDLLPath = function(path) {
-    DLLPATH = path
-}
-
-var uchar = ref.types.uchar
+// Define useful datatypes
 var ushortArray = refArray('ushort')
 var intPointer = ref.refType('int')
 var ucharArray = refArray('uchar')
 
+var DLLPATH = "C:/Users/filippo.cara/Desktop/node-optris/irDirectSDK/sdk/x64/libirimager.dll"
+// Initialize lib as a global var
+var lib
 
-var lib = ffi.Library(DLLPATH, {
-    "evo_irimager_usb_init": [ "int", ["string", "string", "string"]],
-    "evo_irimager_tcp_init": [ "void", ["string", "int"]],
-    "evo_irimager_terminate": [ "int", []],
-    "evo_irimager_get_thermal_image_size": [ "int", [intPointer, intPointer]],
-    "evo_irimager_get_palette_image_size": [ "int", [intPointer, intPointer]],
-    "evo_irimager_get_thermal_image" : ["int", [intPointer, intPointer, ushortArray]],
-    "evo_irimager_get_palette_image" : ["int", [intPointer, intPointer, ucharArray]],
-    "evo_irimager_get_thermal_palette_image": ["void", [intPointer, intPointer, ushortArray, intPointer, intPointer, ucharArray]],
-    "evo_irimager_set_palette":["void", ["int"]]
-  });
+const loadDLL = function(path) {
+    try {
+        lib = ffi.Library(path, {
+            "evo_irimager_usb_init": [ "int", ["string", "string", "string"]],
+            "evo_irimager_tcp_init": [ "void", ["string", "int"]],
+            "evo_irimager_terminate": [ "int", []],
+            "evo_irimager_get_thermal_image_size": [ "int", [intPointer, intPointer]],
+            "evo_irimager_get_palette_image_size": [ "int", [intPointer, intPointer]],
+            "evo_irimager_get_thermal_image" : ["int", [intPointer, intPointer, ushortArray]],
+            "evo_irimager_get_palette_image" : ["int", [intPointer, intPointer, ucharArray]],
+            "evo_irimager_get_thermal_palette_image": ["void", [intPointer, intPointer, ushortArray, intPointer, intPointer, ucharArray]],
+            "evo_irimager_set_palette":["void", ["int"]]
+          });
+
+    } catch (error) {
+        console.log("Error: impossible to read the DLL")
+    }
+}
+
+// Initialize lib with default path value
+loadDLL(DLLPATH)
 
 // @brief Initializes an IRImager instance connected to this computer via USB
 // @param[in] xml_config path to xml config
@@ -132,8 +139,8 @@ var get_thermal_image = function(w, h) {
 // TODO: to be tested
 var get_palette_image = function(w, h) {
     let arr = new ucharArray(w * h * 3)
-    w = ref.ref(w)
-    h = ref.ref(h)
+    w = ref.alloc('int', w);
+    h = ref.alloc('int', h);
     _  = lib.evo_irimager_get_thermal_image(w, h, arr)
     return arr
 }
@@ -208,6 +215,7 @@ var set_palette = function(id) {
 */
 
 // Exports functions
+module.exports.loadDLL = loadDLL
 module.exports.usb_init = usb_init
 module.exports.tcp_init = tcp_init
 module.exports.terminate = terminate
