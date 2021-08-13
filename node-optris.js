@@ -26,7 +26,7 @@ const loadDLL = function(path) {
           });
 
     } catch (error) {
-        console.log("Error: impossible to read the DLL")
+        throw new Error("Error: impossible to read the DLL")
     }
 }
 
