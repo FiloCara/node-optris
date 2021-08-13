@@ -43,7 +43,12 @@ loadDLL(DLLPATH)
 
 var usb_init = function(xml_config, formats_def, log_file) {
     let errorCode = lib.evo_irimager_usb_init(xml_config, formats_def, log_file)
-    return errorCode
+    if (errorCode !== 0) {
+        throw new Error("Error: Impossible to connect to the camera")
+    }
+    else {
+        return errorCode
+    }
 };
 
 // @brief Initializes the TCP connection to the daemon process (non-blocking)
