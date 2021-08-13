@@ -15,18 +15,20 @@ const loadDLL = function(path) {
     try {
         lib = ffi.Library(path, {
             "evo_irimager_usb_init": [ "int", ["string", "string", "string"]],
-            "evo_irimager_tcp_init": [ "void", ["string", "int"]],
+            "evo_irimager_tcp_init": [ "int", ["string", "int"]],
             "evo_irimager_terminate": [ "int", []],
             "evo_irimager_get_thermal_image_size": [ "int", [intPointer, intPointer]],
             "evo_irimager_get_palette_image_size": [ "int", [intPointer, intPointer]],
             "evo_irimager_get_thermal_image" : ["int", [intPointer, intPointer, ushortArray]],
             "evo_irimager_get_palette_image" : ["int", [intPointer, intPointer, ucharArray]],
             "evo_irimager_get_thermal_palette_image": ["void", [intPointer, intPointer, ushortArray, intPointer, intPointer, ucharArray]],
-            "evo_irimager_set_palette":["void", ["int"]]
+            "evo_irimager_set_palette":["void", ["int"]],
+            "int evo_irimager_set_shutter_mode":["int", ["int"]],
+            "evo_irimager_trigger_shutter_flag":["int", ["void"]]
           });
 
     } catch (error) {
-        throw new Error("Error: impossible to read the DLL")
+        throw new Error("Impossible to read the DLL")
     }
 }
 
@@ -42,12 +44,9 @@ loadDLL(DLLPATH)
 // __IRDIRECTSDK_API__ int evo_irimager_usb_init(const char* xml_config, const char* formats_def, const char* log_file);
 
 var usb_init = function(xml_config, formats_def, log_file) {
-    let errorCode = lib.evo_irimager_usb_init(xml_config, formats_def, log_file)
-    if (errorCode !== 0) {
-        throw new Error("Error: Impossible to connect to the camera")
-    }
-    else {
-        return errorCode
+    let res = lib.evo_irimager_usb_init(xml_config, formats_def, log_file)
+    if (res !== 0) {
+        throw new Error("Impossible to establish a connection to the camera (let have a look at the Node-Red logs for any further information")
     }
 };
 
@@ -59,8 +58,10 @@ var usb_init = function(xml_config, formats_def, log_file) {
 // __IRDIRECTSDK_API__ int evo_irimager_tcp_init(const char* ip, int port);
 
 var tcp_init = function(ip, port) {
-    let errorCode = lib.evo_irimager_tcp_init(ip, port)
-    return errorCode
+    let res = lib.evo_irimager_tcp_init(ip, port)
+    if (res !== 0) {
+        throw new Error("Impossible to establish a connection to the camera (let have a look at the Node-Red logs for any further information")
+    }
 };
 
 //
@@ -71,8 +72,10 @@ var tcp_init = function(ip, port) {
 //
 
 var terminate = function() {
-    let errorCode = lib.evo_irimager_terminate() 
-    return errorCode
+    let res = lib.evo_irimager_terminate() 
+    if (res !== 0) {
+        throw new Error("The process was not terminated correctly")
+    }
 };
 
 /**
@@ -87,8 +90,14 @@ var terminate = function() {
 var get_thermal_image_size = function() {
     let w = ref.alloc('int');
     let h = ref.alloc('int');
-    _ = lib.evo_irimager_get_thermal_image_size(w, h)
-    return [w, h]
+    let res = lib.evo_irimager_get_thermal_image_size(w, h)
+    if (res !== 0) {
+        throw new Error("Impossible to compute the thermal image size, is the libirimager process initialized ?")
+    }
+    else {
+        return [w, h]
+    }
+    
 }
 
 /**
@@ -104,8 +113,13 @@ var get_thermal_image_size = function() {
     // Alloc two integers 
     let w = ref.alloc('int');
     let h = ref.alloc('int');
-    _ = lib.evo_irimager_get_palette_image_size(w, h)
-    return [w, h]
+    let res = lib.evo_irimager_get_palette_image_size(w, h)
+    if (res !== 0) {
+        throw new Error("Impossible to compute the palette image size, is the libirimager process initialized ?")
+    }
+    else {
+        return [w, h]
+    }
 }
 
 /**
@@ -198,26 +212,49 @@ var get_thermal_palette_image = function(w, h) {
  __IRDIRECTSDK_API__ int evo_irimager_set_palette(int id);
 */
 
+const colorPalette = {
+    eAlarmBlue   :1,
+    eAlarmBlueHi :2,
+    eGrayBW      :3,
+    eGrayWB      :4,
+    eAlarmGreen  :5,
+    eIron        :6,
+    eIronHi      :7,
+    eMedical     :8,
+    eRainbow     :9,
+    eRainbowHi   :10,
+    eAlarmRed    :11 
+}
+
+// TODO: to be tested
 var set_palette = function(id) {
-    _ = lib.evo_irimager_set_palette(id)
+    let res = lib.evo_irimager_set_palette(id)
 }
 
 /**
  * @brief sets shutter flag control mode
- * @param mode 0 means manual control, 1 means automode
+ * @param mode 0 means manual control, 1 means automate
  * @return error code: 0 on success, -1 on error, -2 on fatal error (only TCP connection)
  
  __IRDIRECTSDK_API__ int evo_irimager_set_shutter_mode(int mode);
-
 */
+
+// TODO: to be tested
+var set_shutter_mode = function(mode) {
+    let res = lib.evo_irimager_set_shutter_mode(mode)
+}
 
  /**
   * @brief forces a shutter flag cycle
   * @return error code: 0 on success, -1 on error, -2 on fatal error (only TCP connection)
   
  __IRDIRECTSDK_API__ int evo_irimager_trigger_shutter_flag();
-
 */
+
+// TODO: to be tested
+var trigger_shutter_flag = function() {
+    let res = lib.evo_irimager_trigger_shutter_flag()
+}
 
 // Exports functions
 module.exports.loadDLL = loadDLL
@@ -228,5 +265,9 @@ module.exports.get_thermal_image_size = get_thermal_image_size
 module.exports.get_palette_image_size = get_palette_image_size 
 module.exports.get_thermal_image = get_thermal_image
 module.exports.get_palette_image = get_palette_image
+module.exports.get_thermal_palette_image = get_thermal_palette_image
 module.exports.set_palette = set_palette
+module.exports.colorPalette = colorPalette
+module.exports.set_shutter_mode = set_shutter_mode
+module.exports.trigger_shutter_flag = trigger_shutter_flag
 
