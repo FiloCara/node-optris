@@ -7,11 +7,11 @@ var ushortArray = refArray('ushort')
 var intPointer = ref.refType('int')
 var ucharArray = refArray('uchar')
 
-var DLLPATH = "C:/Users/filippo.cara/Desktop/node-optris/irDirectSDK/sdk/x64/libirimager.dll"
 // Initialize lib as a global var
 var lib
 
 const loadDLL = function(path) {
+    console.log(path)
     try {
         lib = ffi.Library(path, {
             "evo_irimager_usb_init": [ "int", ["string", "string", "string"]],
@@ -23,17 +23,15 @@ const loadDLL = function(path) {
             "evo_irimager_get_palette_image" : ["int", [intPointer, intPointer, ucharArray]],
             "evo_irimager_get_thermal_palette_image": ["void", [intPointer, intPointer, ushortArray, intPointer, intPointer, ucharArray]],
             "evo_irimager_set_palette":["void", ["int"]],
-            "int evo_irimager_set_shutter_mode":["int", ["int"]],
+            "evo_irimager_set_shutter_mode":["int", ["int"]],
             "evo_irimager_trigger_shutter_flag":["int", ["void"]]
           });
 
     } catch (error) {
+        console.log(error)
         throw new Error("Impossible to read the DLL")
     }
 }
-
-// Initialize lib with default path value
-loadDLL(DLLPATH)
 
 // @brief Initializes an IRImager instance connected to this computer via USB
 // @param[in] xml_config path to xml config
@@ -46,7 +44,7 @@ loadDLL(DLLPATH)
 var usb_init = function(xml_config, formats_def, log_file) {
     let res = lib.evo_irimager_usb_init(xml_config, formats_def, log_file)
     if (res !== 0) {
-        throw new Error("Impossible to establish a connection to the camera (let have a look at the Node-Red logs for any further information")
+        throw new Error("Impossible to establish a connection to the camera")
     }
 };
 
@@ -97,7 +95,6 @@ var get_thermal_image_size = function() {
     else {
         return [w, h]
     }
-    
 }
 
 /**
