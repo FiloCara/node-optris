@@ -11,7 +11,6 @@ var ucharArray = refArray('uchar')
 var lib
 
 const loadDLL = function(path) {
-    console.log(path)
     try {
         lib = ffi.Library(path, {
             "evo_irimager_usb_init": [ "int", ["string", "string", "string"]],
@@ -28,7 +27,6 @@ const loadDLL = function(path) {
           });
 
     } catch (error) {
-        console.log(error)
         throw new Error("Impossible to read the DLL")
     }
 }
@@ -250,7 +248,7 @@ var set_shutter_mode = function(mode) {
 
 // TODO: to be tested
 var trigger_shutter_flag = function() {
-    let res = lib.evo_irimager_trigger_shutter_flag()
+    let res = lib.evo_irimager_trigger_shutter_flag(0)
 }
 
 // Exports functions
