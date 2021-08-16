@@ -23,7 +23,10 @@ const loadDLL = function(path) {
             "evo_irimager_get_thermal_palette_image": ["void", [intPointer, intPointer, ushortArray, intPointer, intPointer, ucharArray]],
             "evo_irimager_set_palette":["void", ["int"]],
             "evo_irimager_set_shutter_mode":["int", ["int"]],
-            "evo_irimager_trigger_shutter_flag":["int", ["void"]]
+            "evo_irimager_trigger_shutter_flag":["int", []],
+            "evo_irimager_daemon_launch": ["int",[]],
+            "evo_irimager_daemon_is_running": ["int",[]],
+            "evo_irimager_daemon_kill": ["int",[]]
           });
 
     } catch (error) {
@@ -224,6 +227,7 @@ const colorPalette = {
 // TODO: to be tested
 var set_palette = function(id) {
     let res = lib.evo_irimager_set_palette(id)
+    return res
 }
 
 /**
@@ -237,6 +241,7 @@ var set_palette = function(id) {
 // TODO: to be tested
 var set_shutter_mode = function(mode) {
     let res = lib.evo_irimager_set_shutter_mode(mode)
+    return res
 }
 
  /**
@@ -248,8 +253,48 @@ var set_shutter_mode = function(mode) {
 
 // TODO: to be tested
 var trigger_shutter_flag = function() {
-    let res = lib.evo_irimager_trigger_shutter_flag(0)
+    let res = lib.evo_irimager_trigger_shutter_flag()
+    return res
 }
+
+/**
+ * Launch TCP daemon
+ * @return error code: 0 on success, -1 on error, -2 on fatal error (only TCP connection)
+
+ __IRDIRECTSDK_API__ int evo_irimager_daemon_launch();
+ */
+
+ // TODO: to be tested
+ var daemon_launch = function() {
+     let res = lib.evo_irimager_daemon_launch()
+     return res
+ }
+
+ /**
+  * Check whether daemon is already running
+  * @return error code: 0 daemon is already active, -1 daemon is not started yet
+
+ __IRDIRECTSDK_API__ int evo_irimager_daemon_is_running();
+*/
+
+// TODO: to be tested
+var daemon_is_running = function() {
+    let res = lib.evo_irimager_daemon_is_running()
+    return res
+}
+
+ /**
+  * Kill TCP daemon
+  * @return error code: 0 on success, -1 on error, -2 on fatal error (only TCP connection)
+  
+ __IRDIRECTSDK_API__ int evo_irimager_daemon_kill();
+*/
+
+var daemon_kill = function() {
+    let res = lib.evo_irimager_daemon_kill()
+    return res
+}
+
 
 // Exports functions
 module.exports.loadDLL = loadDLL
@@ -265,4 +310,7 @@ module.exports.set_palette = set_palette
 module.exports.colorPalette = colorPalette
 module.exports.set_shutter_mode = set_shutter_mode
 module.exports.trigger_shutter_flag = trigger_shutter_flag
+module.exports.daemon_launch = daemon_launch
+module.exports.daemon_is_running = daemon_is_running
+module.exports.daemon_kill = daemon_kill
 

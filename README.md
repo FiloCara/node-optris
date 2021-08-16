@@ -22,8 +22,11 @@ This module provides a NodeJS binding to the Evocortex Libirimager SDK. The dire
 |evo_irimager_get_palette_image | get_palette_image|Accessor to an RGB palette image by reference|
 |evo_irimager_get_thermal_palette_image|get_thermal_palette_image|Accessor to an RGB palette image and a thermal image by reference|
 |evo_irimager_set_palette|set_palette |Set RGB palette|
-|evo_irimager_set_shutter_mode|set_shutter_mode|sets shutter flag control mode (0:manual, 1:auto)|
-|evo_irimager_trigger_shutter_flag|trigger_shutter_flag|forces a shutter flag cycle|
+|evo_irimager_set_shutter_mode|set_shutter_mode|Sets shutter flag control mode (0:manual, 1:auto)|
+|evo_irimager_trigger_shutter_flag|trigger_shutter_flag|Forces a shutter flag cycle|
+|evo_irimager_daemon_launch|daemon_launch|Launch TCP daemon|
+|evo_irimager_daemon_is_running|daemon_is_running|Check whether daemon is already running|
+|evo_irimager_daemon_kill|daemon_kill|Kill TCP daemon|
 
 More information available in the docstrings of the `node-optris.js` file.
 
