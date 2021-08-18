@@ -145,7 +145,7 @@ var get_thermal_image = function(w, h) {
     else {
         // Transform the result to a Uint16Array, is it the fastest way to do that ? 
         arr = new Uint16Array(arr.buffer.buffer)
-        return arr.buffer
+        return Buffer.from(arr.buffer)
     }
     
 }
