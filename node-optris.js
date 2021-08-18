@@ -134,7 +134,7 @@ var get_thermal_image_size = function() {
  */
 
 var get_thermal_image = function(w, h) {
-    let arr = Buffer.alloc(w * h)
+    let arr = new Uint16Array(w * h)
     w = ref.alloc('int', w);
     h = ref.alloc('int', h);
     let res  = lib.evo_irimager_get_thermal_image(w, h, arr)
