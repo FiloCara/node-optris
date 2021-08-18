@@ -177,7 +177,7 @@ var get_palette_image = function(w, h) {
         throw new Error("Impossible to get the palette frame")
     }
     else {
-        return new Buffer.from(arr.buffer.buffer)
+        return Buffer.from(arr.buffer.buffer)
     }
 }
 
