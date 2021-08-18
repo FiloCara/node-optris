@@ -145,7 +145,12 @@ var get_thermal_image = function(w, h) {
     else {
         // Transform the result to a Uint16Array, is it the fastest way to do that ? 
         arr = new Uint16Array(arr.buffer.buffer)
-        return Buffer.from(arr.buffer)
+        // Copy data to normal array
+        new_arr = []
+        for (let i=0;i < arr.length; i++) {
+            new_arr[i] = (arr[i] - 1000) / 10.0
+        }
+        return new_arr
     }
     
 }
@@ -167,12 +172,12 @@ var get_palette_image = function(w, h) {
     let arr = new ucharArray(w * h * 3)
     w = ref.alloc('int', w);
     h = ref.alloc('int', h);
-    let res  = lib.evo_irimager_get_thermal_image(w, h, arr)
+    let res  = lib.evo_irimager_get_palette_image(w, h, arr)
     if (res !== 0) {
         throw new Error("Impossible to get the palette frame")
     }
     else {
-        return arr
+        return new Buffer.from(arr.buffer.buffer)
     }
 }
 
