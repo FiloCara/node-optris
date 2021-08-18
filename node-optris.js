@@ -134,7 +134,8 @@ var get_thermal_image_size = function() {
  */
 
 var get_thermal_image = function(w, h) {
-    let arr = new Uint16Array(w * h)
+    const size = w * h
+    let arr = new ushortArray(size)
     w = ref.alloc('int', w);
     h = ref.alloc('int', h);
     let res  = lib.evo_irimager_get_thermal_image(w, h, arr)
@@ -142,7 +143,9 @@ var get_thermal_image = function(w, h) {
         throw new Error("Impossible to get the thermal frame")
     }
     else {
-        return arr
+        // Transform the result to a Uint16Array, is it the fastest way to do that ? 
+        arr = new Uint16Array(arr.buffer.buffer)
+        return arr.buffer
     }
     
 }
