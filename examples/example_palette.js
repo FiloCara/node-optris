@@ -3,7 +3,7 @@ const optris = require('../node-optris')
 
 // Set you current config file path
 xmlPath = "../config_file_windows.xml"
-formatsPath = "../Formats.def"
+formatsPath = "../"
 
 // Load DLL 
 sdkPath = "irDirectSDK/sdk/x64/libirimager.dll" // Define yout SDK path

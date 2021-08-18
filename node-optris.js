@@ -94,7 +94,7 @@ var get_thermal_image_size = function() {
         throw new Error("Impossible to compute the thermal image size, is the libirimager process initialized ?")
     }
     else {
-        return [w, h]
+        return [w.deref(), h.deref()]
     }
 }
 
@@ -116,7 +116,7 @@ var get_thermal_image_size = function() {
         throw new Error("Impossible to compute the palette image size, is the libirimager process initialized ?")
     }
     else {
-        return [w, h]
+        return [w.deref(), h.deref()]
     }
 }
 
@@ -137,8 +137,14 @@ var get_thermal_image = function(w, h) {
     let arr = new ushortArray(w * h)
     w = ref.alloc('int', w);
     h = ref.alloc('int', h);
-    _  = lib.evo_irimager_get_thermal_image(w, h, arr)
-    return arr
+    let res  = lib.evo_irimager_get_thermal_image(w, h, arr)
+    if (res !== 0) {
+        throw new Error("Impossible to get the thermal frame")
+    }
+    else {
+        return arr
+    }
+    
 }
 
 /**
@@ -158,8 +164,13 @@ var get_palette_image = function(w, h) {
     let arr = new ucharArray(w * h * 3)
     w = ref.alloc('int', w);
     h = ref.alloc('int', h);
-    _  = lib.evo_irimager_get_thermal_image(w, h, arr)
-    return arr
+    let res  = lib.evo_irimager_get_thermal_image(w, h, arr)
+    if (res !== 0) {
+        throw new Error("Impossible to get the palette frame")
+    }
+    else {
+        return arr
+    }
 }
 
 /**
