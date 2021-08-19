@@ -246,7 +246,9 @@ const colorPalette = {
 // TODO: to be tested
 var set_palette = function(id) {
     let res = lib.evo_irimager_set_palette(id)
-    return res
+    if (res !== 0) {
+        throw new Error("Impossible to get set the palette color")
+    }
 }
 
 /**
@@ -260,7 +262,9 @@ var set_palette = function(id) {
 // TODO: to be tested
 var set_shutter_mode = function(mode) {
     let res = lib.evo_irimager_set_shutter_mode(mode)
-    return res
+    if (res !== 0) {
+        throw new Error("Impossible to get set the shutter mode, please enter 0 for manual control and 1 for auto mode")
+    }
 }
 
  /**
@@ -273,7 +277,9 @@ var set_shutter_mode = function(mode) {
 // TODO: to be tested
 var trigger_shutter_flag = function() {
     let res = lib.evo_irimager_trigger_shutter_flag()
-    return res
+    if (res !== 0) {
+        throw new Error("Impossible to trigger the shutter flag")
+    }
 }
 
 /**
