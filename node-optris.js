@@ -196,16 +196,31 @@ var get_palette_image = function(w, h) {
 
 // TODO: to be tested
 var get_thermal_palette_image = function(w, h) {
-    // Allocate thermal varaibles 
+    // Allocate thermal variables 
     let thermal_arr = new ushortArray(w * h)
     let w_t = ref.alloc('int', w);
     let h_t = ref.alloc('int', h);
-    // Allocate palette varaibles 
+    // Allocate palette variables 
     let palette_arr = new ucharArray(w * h * 3)
     let w_p = ref.ref(w)
     let h_p = ref.ref(h)
-    _  = evo_irimager_get_thermal_palette_image(w_t, h_t, thermal_arr, w_p, h_p, palette_arr)
-    return {"thermal":thermal_arr, "palette":palette_arr}
+    let res  = evo_irimager_get_thermal_palette_image(w_t, h_t, thermal_arr, w_p, h_p, palette_arr)
+    if (res !== 0) {
+        throw new Error("Impossible to get thermal and palette frame")
+    }
+    else {
+        // Post process thermal frame
+        thermal_arr = new Uint16Array(thermal_arr.buffer.buffer)
+        // Copy data to normal array
+        let processedThermalArray = []
+        for (let i=0;i < thermal_arr.length; i++) {
+            processedThermalArray[i] = (thermal_arr[i] - 1000) / 10.0
+        }
+
+        // Post process palette frame
+        let processedPaletteBuffer = Buffer.from(palette_arr.buffer.buffer)
+        return {"thermal":processedThermalArray, "palette":processedPaletteBuffer}
+    }
 }
 
 /**
@@ -291,8 +306,10 @@ var trigger_shutter_flag = function() {
 
  // TODO: to be tested
  var daemon_launch = function() {
-     let res = lib.evo_irimager_daemon_launch()
-     return res
+    let res = lib.evo_irimager_daemon_launch()
+    if (res !== 0) {
+        throw new Error("Impossible to launch the TCP daemon")
+    }
  }
 
  /**
@@ -305,7 +322,9 @@ var trigger_shutter_flag = function() {
 // TODO: to be tested
 var daemon_is_running = function() {
     let res = lib.evo_irimager_daemon_is_running()
-    return res
+    if (res !== 0) {
+        throw new Error("Impossible to retrieve if daemon is running correctly")
+    }
 }
 
  /**
@@ -317,7 +336,9 @@ var daemon_is_running = function() {
 
 var daemon_kill = function() {
     let res = lib.evo_irimager_daemon_kill()
-    return res
+    if (res !== 0) {
+        throw new Error("Impossible to kill the TCP daemon")
+    }
 }
 
 
