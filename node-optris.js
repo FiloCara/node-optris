@@ -177,7 +177,7 @@ var get_palette_image = function(w, h) {
         throw new Error("Impossible to get the palette frame")
     }
     else {
-        return Buffer.from(arr.buffer.buffer)
+        return Buffer.from(new Uint8Array(arr.buffer)).toString('base64') //.toString("base64")
     }
 }
 
