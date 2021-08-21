@@ -1,9 +1,6 @@
 const ffi = require('ffi-napi');
 const ref = require('ref-napi')
 const refArray = require('ref-array-napi')
-var cv = require("opencv4nodejs")
-const jpeg = require("jpeg-js")
-const sharp = require("sharp")
 
 // Define useful datatypes
 var ushortArray = refArray('ushort')
