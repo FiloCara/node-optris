@@ -1,6 +1,9 @@
 const ffi = require('ffi-napi');
 const ref = require('ref-napi')
 const refArray = require('ref-array-napi')
+var cv = require("opencv4nodejs")
+const jpeg = require("jpeg-js")
+const sharp = require("sharp")
 
 // Define useful datatypes
 var ushortArray = refArray('ushort')
@@ -152,7 +155,6 @@ var get_thermal_image = function(w, h) {
         }
         return new_arr
     }
-    
 }
 
 /**
@@ -170,14 +172,15 @@ var get_thermal_image = function(w, h) {
 // TODO: to be tested
 var get_palette_image = function(w, h) {
     let arr = new ucharArray(w * h * 3)
-    w = ref.alloc('int', w);
-    h = ref.alloc('int', h);
-    let res  = lib.evo_irimager_get_palette_image(w, h, arr)
+    w_ = ref.alloc('int', w);
+    h_ = ref.alloc('int', h);
+    let res  = lib.evo_irimager_get_palette_image(w_, h_, arr)
     if (res !== 0) {
         throw new Error("Impossible to get the palette frame")
     }
     else {
-        return Buffer.from(new Uint8Array(arr.buffer)).toString('base64') //.toString("base64")
+        // Return raw buffer
+        return Buffer.from(new Uint8Array(arr.buffer))
     }
 }
 
@@ -218,7 +221,7 @@ var get_thermal_palette_image = function(w, h) {
         }
 
         // Post process palette frame
-        let processedPaletteBuffer = Buffer.from(palette_arr.buffer.buffer)
+        let processedPaletteBuffer = Buffer.from(new Uint8Array(palette_arr.buffer))
         return {"thermal":processedThermalArray, "palette":processedPaletteBuffer}
     }
 }
